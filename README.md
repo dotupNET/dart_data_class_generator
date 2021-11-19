@@ -98,6 +98,7 @@ You can customize the generator to only generate the functions you want in your 
 * `dart_data_class_generator.constructor.enabled`: If true, generates a constructor for a data class.
 * `dart_data_class_generator.copyWith.enabled`: If true, generates a copyWith function for a data class.
 * `dart_data_class_generator.toMap.enabled`: If true, generates a toMap function for a data class.
+* `dart_data_class_generator.toMap.hideNull`: "If true, null values are not in map."
 * `dart_data_class_generator.fromMap.enabled`: If true, generates a fromMap function for a data class.
 * `dart_data_class_generator.toJson.enabled`: If true, generates a toJson function for a data class.
 * `dart_data_class_generator.fromJson.enabled`: If true, generates a fromJson function for a data class.
