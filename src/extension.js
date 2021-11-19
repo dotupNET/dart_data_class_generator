@@ -1067,11 +1067,11 @@ class DataClassGenerator {
         /**
          * @param {ClassField} prop
          */
-        function customTypeMapping(prop, name = null, endFlag = ',\n') {
+        function customTypeMapping(prop, name = null, endFlag = ',\n', nullSafeSign = '?') {
             prop = prop.isCollection ? prop.listType : prop;
             name = name == null ? prop.name : name;
 
-            const nullSafe = prop.isNullable ? '?' : '';
+            const nullSafe = prop.isNullable ? nullSafeSign : '';
 
             switch (prop.type) {
                 case 'DateTime':
@@ -1116,14 +1116,13 @@ class DataClassGenerator {
         }
 
         function withoutNullValue(){
-            let body = '  final result = <String, dynamic>{};';
+            let body = '  final result = <String, dynamic>{};\n\n';
 
             for (let p of props) {
-                body += `    '${p.jsonName}': `;
     
-                const nullSafe = p.isNullable ? '?' : '';
+                const nullSafe = p.isNullable ? '!' : '';
     
-                let nextLine;
+                let nextLine = '';
                 if (p.isEnum) {
                     nextLine= `${p.name}${nullSafe}.index`;
                 } else if (p.isCollection) {
@@ -1131,21 +1130,24 @@ class DataClassGenerator {
                         const mapFlag = p.isSet ? `${nullSafe}.toList()` : '';
                         nextLine= `${p.name}${mapFlag}`;
                     } else {
-                        nextLine= `${p.name}?.map((x) => ${customTypeMapping(p, 'x', '')})?.toList()`
+                        nextLine= `${p.name}${nullSafe}.map((x) => ${customTypeMapping(p, 'x', '')}).toList()`
                     }
                 } else {
-                    nextLine= customTypeMapping(p);
+                    nextLine= customTypeMapping(p, null, '', '!');
                 }
-    
-                nextLine = `if(${p.name} != null){\\
-                    ${nextLine};
-                }\n`;
+
+                if (p.isNullable) {
+                    nextLine = `  if(${p.name} != null){\n    result.addAll({'${p.jsonName}': ${nextLine}});\n  }\n`;
+                } else {
+                    nextLine = `  result.addAll({'${p.jsonName}': ${nextLine}});\n`;
+                    
+                }
 
                 body += nextLine;
     
             }
 
-            return `${body}\nreturn result;\n`;
+            return `${body}\n  return result;`;
         }
 
         const body = hideNull == true ?  withoutNullValue() : withNullValue();
@@ -1190,7 +1192,7 @@ class DataClassGenerator {
             const value = `map['${p.jsonName}']`;
 
             // Add nullable check before serialization
-            if (p.isNullable) {
+            if (p.isNullable && !p.isPrimitive) {
                 method += value + ' != null ? '
             }
 
@@ -1212,7 +1214,7 @@ class DataClassGenerator {
             }
 
             // end nullable check if field is nullable
-            if (p.isNullable) {
+            if (p.isNullable && !p.isPrimitive) {
                 method += " : null";
             }
 
