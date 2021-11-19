@@ -1094,16 +1094,16 @@ class DataClassGenerator {
     
                 let nextLine;
                 if (p.isEnum) {
-                    nextLine= `${p.name}${nullSafe}.index,\n`;
+                    nextLine= `${p.name}${nullSafe}.index`;
                 } else if (p.isCollection) {
                     if (p.isMap || p.listType.isPrimitive) {
                         const mapFlag = p.isSet ? `${nullSafe}.toList()` : '';
-                        nextLine= `${p.name}${mapFlag},\n`;
+                        nextLine= `${p.name}${mapFlag}`;
                     } else {
-                        nextLine= `${p.name}?.map((x) => ${customTypeMapping(p, 'x', '')})?.toList(),\n`
+                        nextLine= `${p.name}?.map((x) => ${customTypeMapping(p, 'x', '')})?.toList()`
                     }
                 } else {
-                    nextLine= customTypeMapping(p);
+                    nextLine= customTypeMapping(p, null, '');
                 }
     
                 nextLine = `${nextLine},\n`;
@@ -1112,7 +1112,7 @@ class DataClassGenerator {
     
                 // if (p.name == props[props.length - 1].name) method += '  };\n';
             }
-            return `  return {\n${body}  };\n}`;
+            return `  return {\n${body}  };`;
         }
 
         function withoutNullValue(){

@@ -135,7 +135,7 @@
 							true,
 							false
 						],
-						"default": true,
+						"default": false,
 						"description": "If true, null values are not in map."
 					},
 					"dart_data_class_generator.fromMap.enabled": {
