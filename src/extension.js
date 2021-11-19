@@ -761,7 +761,7 @@ class DataClassGenerator {
                     if (readSetting('copyWith.enabled') && this.isPartSelected('copyWith'))
                         this.insertCopyWith(clazz);
                     if (readSetting('toMap.enabled') && this.isPartSelected('serialization'))
-                        this.insertToMap(clazz);
+                        this.insertToMap(clazz, readSetting('toMap.hideNull'));
                     if (readSetting('fromMap.enabled') && this.isPartSelected('serialization'))
                         this.insertFromMap(clazz);
                     if (readSetting('toJson.enabled') && this.isPartSelected('serialization'))
@@ -1062,7 +1062,7 @@ class DataClassGenerator {
     /**
      * @param {DartClass} clazz
      */
-    insertToMap(clazz) {
+    insertToMap(clazz, hideNull) {
         let props = clazz.properties;
         /**
          * @param {ClassField} prop
@@ -1085,26 +1085,71 @@ class DataClassGenerator {
             }
         }
 
-        let method = `Map<String, dynamic> toMap() {\n`;
-        method += '  return {\n';
-        for (let p of props) {
-            method += `    '${p.jsonName}': `;
-
-            if (p.isEnum) {
-                method += `${p.name}?.index,\n`;
-            } else if (p.isCollection) {
-                if (p.isMap || p.listType.isPrimitive) {
-                    const mapFlag = p.isSet ? (p.isNullable ? '?' : '') + '.toList()' : '';
-                    method += `${p.name}${mapFlag},\n`;
+        function withNullValue(){
+            let body = '';
+            for (let p of props) {
+                body += `    '${p.jsonName}': `;
+    
+                const nullSafe = p.isNullable ? '?' : '';
+    
+                let nextLine;
+                if (p.isEnum) {
+                    nextLine= `${p.name}${nullSafe}.index,\n`;
+                } else if (p.isCollection) {
+                    if (p.isMap || p.listType.isPrimitive) {
+                        const mapFlag = p.isSet ? `${nullSafe}.toList()` : '';
+                        nextLine= `${p.name}${mapFlag},\n`;
+                    } else {
+                        nextLine= `${p.name}?.map((x) => ${customTypeMapping(p, 'x', '')})?.toList(),\n`
+                    }
                 } else {
-                    method += `${p.name}?.map((x) => ${customTypeMapping(p, 'x', '')})?.toList(),\n`
+                    nextLine= customTypeMapping(p);
                 }
-            } else {
-                method += customTypeMapping(p);
+    
+                nextLine = `${nextLine},\n`;
+    
+                body += nextLine;
+    
+                // if (p.name == props[props.length - 1].name) method += '  };\n';
             }
-            if (p.name == props[props.length - 1].name) method += '  };\n';
+            return `  return {\n${body}  };\n}`;
         }
-        method += '}';
+
+        function withoutNullValue(){
+            let body = '  final result = <String, dynamic>{};';
+
+            for (let p of props) {
+                body += `    '${p.jsonName}': `;
+    
+                const nullSafe = p.isNullable ? '?' : '';
+    
+                let nextLine;
+                if (p.isEnum) {
+                    nextLine= `${p.name}${nullSafe}.index`;
+                } else if (p.isCollection) {
+                    if (p.isMap || p.listType.isPrimitive) {
+                        const mapFlag = p.isSet ? `${nullSafe}.toList()` : '';
+                        nextLine= `${p.name}${mapFlag}`;
+                    } else {
+                        nextLine= `${p.name}?.map((x) => ${customTypeMapping(p, 'x', '')})?.toList()`
+                    }
+                } else {
+                    nextLine= customTypeMapping(p);
+                }
+    
+                nextLine = `if(${p.name} != null){\\
+                    ${nextLine};
+                }\n`;
+
+                body += nextLine;
+    
+            }
+
+            return `${body}\nreturn result;\n`;
+        }
+
+        const body = hideNull == true ?  withoutNullValue() : withNullValue();
+        let method = `Map<String, dynamic> toMap() {\n${body}\n}`;
 
         this.appendOrReplace('toMap', method, 'Map<String, dynamic> toMap()', clazz);
     }

@@ -129,6 +129,15 @@
 						"default": true,
 						"description": "If true, generates a toMap function for a data class."
 					},
+					"dart_data_class_generator.toMap.hideNull": {
+						"type": "boolean",
+						"enum": [
+							true,
+							false
+						],
+						"default": true,
+						"description": "If true, null values are not in map."
+					},
 					"dart_data_class_generator.fromMap.enabled": {
 						"type": "boolean",
 						"enum": [
