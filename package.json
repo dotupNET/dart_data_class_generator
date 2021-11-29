@@ -2,14 +2,14 @@
 	"name": "dart-data-class-generator",
 	"displayName": "Dart Data Class Generator",
 	"description": "Create dart data classes easily, fast and without writing boilerplate or running code generation.",
-	"publisher": "BendixMa",
+	"publisher": "dotup",
 	"version": "0.5.2",
 	"engines": {
 		"vscode": "^1.37.0"
 	},
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/bxqm/dart_data_class_generator"
+		"url": "https://github.com/dotupNET/dart_data_class_generator"
 	},
 	"icon": "assets/icon.png",
 	"keywords": [
