@@ -3,7 +3,7 @@
 	"displayName": "Dart Data Class Generator",
 	"description": "Create dart data classes easily, fast and without writing boilerplate or running code generation.",
 	"publisher": "dotup",
-	"version": "0.5.2",
+	"version": "0.5.3",
 	"engines": {
 		"vscode": "^1.37.0"
 	},
@@ -20,7 +20,7 @@
 		"data class generator"
 	],
 	"author": {
-		"name": "bxqm"
+		"name": "dotup"
 	},
 	"categories": [
 		"Programming Languages",
@@ -135,7 +135,7 @@
 							true,
 							false
 						],
-						"default": false,
+						"default": true,
 						"description": "If true, null values are not in map."
 					},
 					"dart_data_class_generator.fromMap.enabled": {
