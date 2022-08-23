@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.5.4
+
+Added new setting to capitalize Key
+
 ## 0.5.0
 
 Added support for enums

@@ -607,6 +607,7 @@ class ClassField {
         this.rawType = type;
         this.name = toVarName(name);
         this.key = json ? name : varToKey(this.name);
+        if (readSetting('capitalize.enabled')) this.key = capitalize(this.key);
         this.line = line;
         this.isFinal = isFinal;
         this.isConst = isConst;

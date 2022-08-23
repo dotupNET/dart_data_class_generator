@@ -3,7 +3,7 @@
 	"displayName": "Dart Data Class Generator",
 	"description": "Create dart data classes easily, fast and without writing boilerplate or running code generation.",
 	"publisher": "dotup",
-	"version": "0.5.3",
+	"version": "0.5.4",
 	"engines": {
 		"vscode": "^1.37.0"
 	},
@@ -209,6 +209,15 @@
 						],
 						"default": false,
 						"description": "If true, uses equatable for value equality and hashcode."
+					},
+					"dart_data_class_generator.capitalize.enabled": {
+						"type": "boolean",
+						"enum": [
+							true,
+							false
+						],
+						"default": false,
+						"description": "If true, the key will be capitalized."
 					}
 				}
 			}
