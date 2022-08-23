@@ -209,6 +209,15 @@
 						],
 						"default": false,
 						"description": "If true, uses equatable for value equality and hashcode."
+					},
+					"dart_data_class_generator.capitalize.enabled": {
+						"type": "boolean",
+						"enum": [
+							true,
+							false
+						],
+						"default": false,
+						"description": "If true, the key will be capitalized."
 					}
 				}
 			}
