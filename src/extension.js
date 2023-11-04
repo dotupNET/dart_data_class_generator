@@ -1053,7 +1053,7 @@ class DataClassGenerator {
         method += `  return ${clazz.type}(\n`;
 
         for (let p of clazz.properties) {
-            method += `    ${clazz.hasNamedConstructor ? `${p.name}: ` : ''}${p.name} ?? this.${p.name},\n`;
+            method += `    ${clazz.hasNamedConstructor ? `${p.name}: ` : ''}${p.name} ?? this.${p.rawType == 'DateTime' ? `${p.name}${p.isNullable ? '?' : ''}.copyWith()` : p.name},\n`;
         }
 
         method += '  );\n'
